@@ -1,0 +1,24 @@
+name: quick_auth_sdk
+description: White-label phone authentication SDK powered by hidden backend verification.
+version: 1.0.0
+homepage: https://example.com/quick-auth-sdk
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+  flutter: ">=3.19.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  dio: ^5.9.0
+  ipification_plugin:
+    git:
+      url: https://github.com/bvantagelimited/IPification-Flutter-Plugin-Release.git
+      ref: "2.0.30"
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
