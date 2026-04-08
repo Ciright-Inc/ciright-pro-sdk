@@ -1,101 +1,64 @@
-# quick_auth_sdk (QuickAuthSDK) - White-label Phone Authentication
+# CirightPro Flutter SDK (`quick_auth_sdk`)
 
-This package provides a simple interface for phone authentication while keeping the IPification details hidden.
+White-label Flutter SDK for CirightPro QuickAuth.
 
-## Public API
+This package performs **native network verification** on-device and sends the resulting **authorization code** to your backend. Your backend exchanges the code and returns your app’s **JWT/session**.
 
-### 1) Initialize
+## Install
 
-Call once when your app starts:
+Add the package dependency the way your team distributes it (path/git). Then import:
+
+```dart
+import 'package:quick_auth_sdk/quick_auth_sdk.dart';
+```
+
+## Quick start
+
+### 1) Initialize (once)
 
 ```dart
 QuickAuthSDK.init(
-  apiKey: "client_123",
-  apiBaseUrl: "http://<backend-ip>:3000",
-  cirightProClientId: "<cirightpro_client_id>",
+  apiKey: "<your_api_key>",
+  apiBaseUrl: "https://api.ciright.pro",
+  cirightProClientId: "<your_cirightpro_client_id>",
   redirectUri: "https://get-started.ciright.pro/callback",
-  testMode: false, // only use true on simulator
+  testMode: false, // set true on simulator/CI
 );
 ```
 
 ### 2) Login
 
 ```dart
-final result = await QuickAuthSDK.login("999123456789");
+final result = await QuickAuthSDK.login(
+  "999123456789",
+  onProgress: (msg) => print(msg),
+);
 
 if (result.success) {
-  print(result.token);
+  print("JWT: ${result.token}");
 } else {
-  print(result.message);
+  print("Error: ${result.message}");
 }
 ```
 
-`AuthResult`:
+## Required app configuration
 
-- `success: bool`
-- `message: String`
-- `token: String?`
-- `user: Map<String, dynamic>?`
+### Android deep link + redirect activity
 
-## Android integration requirements
+Your Android app must include the provider redirect activity + an intent-filter that matches your `redirectUri` host/path.
 
-Your app must include the IPification redirect activity + deep link intent-filter.
-In this repo it is implemented in:
+## What the SDK sends to your backend
 
-- `quickauth_demo_app/android/app/src/main/AndroidManifest.xml`
-
-Use the same pattern:
-
-- `android:name="com.ipification.mobile.sdk.im.ui.IMVerificationActivity"`
-- intent filter with:
-  - `android:scheme="https"`
-  - `android:host="get-started.ciright.pro"`
-
-If your `redirectUri` host/path changes, update the manifest filter accordingly.
-
-## What configuration is inside the SDK?
-
-Inside the SDK, `src/services/ip_service.dart` configures the native IPification plugin:
-
-- `setEnv(ENV.SANDBOX)`
-- `setClientId(cirightProClientId)`
-- `setRedirectUri(redirectUri)`
-- scope: `openid ip:phone_verify`
-
-The SDK does NOT store IPification secrets.
-
-For SaaS policy checks, SDK also sends tenant metadata headers to backend:
-
+The SDK includes tenant headers for backend policy enforcement:
+- `x-api-key`
 - `x-qa-client-id` (from `cirightProClientId`)
 - `x-qa-redirect-uri` (from `redirectUri`)
 
-Backend can enforce these per `apiKey`.
+## Backend requirements
 
-## What configuration must be done in your backend?
+Your backend must:
+- exchange the authorization code with the underlying provider
+- return your app’s JWT/session
+- validate the tenant headers against your `apiKey`
 
-The backend exchanges the authorization code with IPification and issues JWT.
-It must have:
-
-- `.env` with:
-  - `MONGO_URI`, `JWT_SECRET`
-  - `IPIFICATION_CLIENT_ID`, `IPIFICATION_CLIENT_SECRET`
-  - `IPIFICATION_BASE_URL`, `REDIRECT_URI`
-  - `HOST` set to a reachable value (usually `0.0.0.0` for dev)
-- A MongoDB `clients` document with your `apiKey`
-
-## Common issues
-
-### Simulator fails with `MissingPluginException`
-Fix: run on a real device or set `testMode: true` during init.
-
-### Login hangs / slow
-Fix: confirm:
- - phone and Mac are on the same network
- - `apiBaseUrl` points to the correct Mac IP
- - backend can reach IPification
-
-### `Phone verification mismatch`
-Fix:
-- backend compares digits-only normalization for `login_hint`
-- phone should be digits-only (7–15 digits)
 
