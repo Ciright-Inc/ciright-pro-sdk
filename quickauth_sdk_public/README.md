@@ -12,7 +12,7 @@ Call once when your app starts:
 QuickAuthSDK.init(
   apiKey: "client_123",
   apiBaseUrl: "http://<backend-ip>:3000",
-  ipificationClientId: "<ipification_client_id>",
+  cirightProClientId: "<cirightpro_client_id>",
   redirectUri: "https://get-started.ciright.pro/callback",
   testMode: false, // only use true on simulator
 );
@@ -58,7 +58,7 @@ If your `redirectUri` host/path changes, update the manifest filter accordingly.
 Inside the SDK, `src/services/ip_service.dart` configures the native IPification plugin:
 
 - `setEnv(ENV.SANDBOX)`
-- `setClientId(ipificationClientId)`
+- `setClientId(cirightProClientId)`
 - `setRedirectUri(redirectUri)`
 - scope: `openid ip:phone_verify`
 
@@ -66,7 +66,7 @@ The SDK does NOT store IPification secrets.
 
 For SaaS policy checks, SDK also sends tenant metadata headers to backend:
 
-- `x-qa-client-id` (from `ipificationClientId`)
+- `x-qa-client-id` (from `cirightProClientId`)
 - `x-qa-redirect-uri` (from `redirectUri`)
 
 Backend can enforce these per `apiKey`.

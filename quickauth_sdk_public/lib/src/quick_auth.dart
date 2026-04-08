@@ -12,14 +12,12 @@ class QuickAuthSDK {
   /// Initialize the SDK.
   ///
   /// Set [testMode] to `true` on simulators / CI where no real SIM is
-  /// available. In test mode the native IP-plugin is skipped entirely and
-  /// [testAuthCode] is sent directly to the backend. Obtain a real one-time
-  /// code from your IPification dashboard or leave it as the placeholder to
-  /// exercise just the backend API-key / DB path.
+  /// available. In test mode the native network verification runtime is skipped
+  /// and [testAuthCode] is sent directly to the backend.
   static void init({
     required String apiKey,
     required String apiBaseUrl,
-    required String ipificationClientId,
+    required String cirightProClientId,
     required String redirectUri,
     bool testMode = false,
     String testAuthCode = 'simulator_test_code',
@@ -27,13 +25,15 @@ class QuickAuthSDK {
   }) {
     if (apiKey.trim().isEmpty) throw ArgumentError('apiKey cannot be empty');
     if (apiBaseUrl.trim().isEmpty) throw ArgumentError('apiBaseUrl cannot be empty');
-    if (ipificationClientId.trim().isEmpty) throw ArgumentError('ipificationClientId cannot be empty');
+    if (cirightProClientId.trim().isEmpty) {
+      throw ArgumentError('cirightProClientId cannot be empty');
+    }
     if (redirectUri.trim().isEmpty) throw ArgumentError('redirectUri cannot be empty');
 
     final apiService = ApiService(
       baseUrl: apiBaseUrl,
       apiKey: apiKey,
-      ipificationClientId: ipificationClientId,
+      cirightProClientId: cirightProClientId,
       redirectUri: redirectUri,
     );
     final ipService = IpService();
@@ -41,7 +41,7 @@ class QuickAuthSDK {
     _authService = AuthService(
       apiService: apiService,
       ipService: ipService,
-      ipificationClientId: ipificationClientId,
+      cirightProClientId: cirightProClientId,
       redirectUri: redirectUri,
       testMode: testMode,
       testAuthCode: testAuthCode,

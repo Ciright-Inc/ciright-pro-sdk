@@ -8,14 +8,14 @@ class AuthService {
   AuthService({
     required ApiService apiService,
     required IpService ipService,
-    required String ipificationClientId,
+    required String cirightProClientId,
     required String redirectUri,
     bool testMode = false,
     String testAuthCode = 'simulator_test_code',
     void Function(String message)? onProgress,
   })  : _apiService = apiService,
         _ipService = ipService,
-        _ipificationClientId = ipificationClientId,
+        _cirightProClientId = cirightProClientId,
         _redirectUri = redirectUri,
         _testMode = testMode,
         _testAuthCode = testAuthCode,
@@ -23,7 +23,7 @@ class AuthService {
 
   final ApiService _apiService;
   final IpService _ipService;
-  final String _ipificationClientId;
+  final String _cirightProClientId;
   final String _redirectUri;
   final bool _testMode;
   final String _testAuthCode;
@@ -50,30 +50,29 @@ class AuthService {
     }
 
     emit('(1/3) Checking operator coverage (native SDK)…');
-    // Let Flutter paint status before native calls may block the UI thread.
     await Future<void>.delayed(const Duration(milliseconds: 50));
 
     final hasCoverage = await _ipService.checkCoverage(
       phone: phone,
-      clientId: _ipificationClientId,
+      clientId: _cirightProClientId,
       redirectUri: _redirectUri,
     );
     if (!hasCoverage) {
       return const AuthResult(
         success: false,
         message:
-            'Coverage unavailable (no IPification coverage, timeout, or plugin error — check flutter logs)',
+            'Coverage unavailable for this number or network — check logs and try again',
       );
     }
 
     try {
       emit(
-        '(2/3) Opening secure verification — finish the browser/SMS step, then return to this app…',
+        '(2/3) Opening secure verification — complete the prompt, then return to this app…',
       );
       await Future<void>.delayed(const Duration(milliseconds: 50));
       final authCode = await _ipService.authenticate(
         phone: phone,
-        clientId: _ipificationClientId,
+        clientId: _cirightProClientId,
         redirectUri: _redirectUri,
       );
       emit('(3/3) Exchanging code with your backend…');

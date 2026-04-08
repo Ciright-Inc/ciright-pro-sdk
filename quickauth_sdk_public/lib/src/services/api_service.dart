@@ -6,11 +6,11 @@ class ApiService {
   ApiService({
     required String baseUrl,
     required String apiKey,
-    required String ipificationClientId,
+    required String cirightProClientId,
     required String redirectUri,
     Dio? dio,
   })  : _apiKey = apiKey,
-        _ipificationClientId = ipificationClientId,
+        _cirightProClientId = cirightProClientId,
         _redirectUri = redirectUri,
         _dio = dio ??
             Dio(
@@ -23,7 +23,7 @@ class ApiService {
                   'Content-Type': 'application/json',
                   'x-api-key': apiKey,
                   // Tenant metadata for backend-side SaaS policy enforcement.
-                  'x-qa-client-id': ipificationClientId,
+                  'x-qa-client-id': cirightProClientId,
                   'x-qa-redirect-uri': redirectUri,
                 },
               ),
@@ -39,7 +39,7 @@ class ApiService {
 
   final Dio _dio;
   final String _apiKey;
-  final String _ipificationClientId;
+  final String _cirightProClientId;
   final String _redirectUri;
 
   Future<AuthResult> login({
@@ -56,7 +56,7 @@ class ApiService {
         options: Options(
           headers: <String, dynamic>{
             'x-api-key': _apiKey,
-            'x-qa-client-id': _ipificationClientId,
+            'x-qa-client-id': _cirightProClientId,
             'x-qa-redirect-uri': _redirectUri,
           },
         ),

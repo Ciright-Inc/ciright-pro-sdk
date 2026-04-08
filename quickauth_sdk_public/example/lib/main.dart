@@ -5,7 +5,7 @@ void main() {
   QuickAuthSDK.init(
     apiKey: 'client_123',
     apiBaseUrl: 'https://your-backend-domain.com',
-    ipificationClientId: 'ipification_client_id',
+    cirightProClientId: 'your_cirightpro_client_id',
     redirectUri: 'https://yourdomain.com/callback',
   );
   runApp(const MyApp());
